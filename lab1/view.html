@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<head>
+<title>Twitter Ticker</title>
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+<link rel="stylesheet" href="style.css" type="text/css" media="all" />
+</head>
+<body>
+<section class="twittertick">
+    <article class="tweet">
+        <aside class="avatar">
+            <img src="" alt="" />
+        </aside>
+        <div class="twtbody">
+            <p class="text"></p>
+        </div>
+    </article>
+</section>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+function fillTweet(tweetdata, tweetblock) {
+    tweetblock.find("img").attr({
+        src: tweetdata.user.profile_image_url,
+        alt: tweetdata.user.name
+    });
+    tweetblock.find(".text").text(tweetdata.text);
+}
+$(document).ready(function() {
+    $.ajax({
+        dataType: "json",
+        url: "tweets.json",
+        success: function(data, textStatus, xhr) {
+            fillTweet(data[125],$($(".tweet")[0]));
+        }
+    });
+});
+</script>
+</body>
