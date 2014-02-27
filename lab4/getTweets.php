@@ -14,7 +14,11 @@ $requestMethod = 'GET';
 $url = 'https://api.twitter.com/1.1/statuses/home_timeline';
 
 $twitter = new TwitterAPIExchange($settings);
-echo $twitter->buildOauth($url,$requestMethod)
-             ->performRequest(TRUE);
+$data = "";
+try {
+    $data = $twitter->buildOauth($url,$requestMethod)->performRequest(true);
+} catch (Exception $e) {
+    $data = "Failed.";
+}
 
 ?>

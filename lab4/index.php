@@ -8,6 +8,10 @@
 <section class="twittertick">
 </section>
 <!--load tticker files-->
+<?php
+require('getTweets.php');
+echo $data;
+?>
 <!--jQuery-->
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
 <!--jQuery Mobile-->
