@@ -116,9 +116,45 @@ function scroll(tweetdata) {
             });
 }
 
+function scroll() {
+    // slide everything down first
+    $(".tweet").addClass("slidedown");
+    $(".hashtag").addClass("slidedown");
+    // then remove the last element
+    var addTweet = $(".tweet:last-child").remove();
+    var addht = $(".hashtag:last-child").remove();
+
+    addTweet.addClass("hidden");
+    addht.addClass("hidden");
+    addTweet.removeClass("slidedown");
+    addht.removeClass("slidedown");
+
+    // insert the new elements into document
+    $(".tweet").one("transitionend", function(){
+            addTweet.prependTo(".tweetscroll");
+            setTimeout(function(){
+                addTweet.addClass("fadeIn").removeClass("hidden");
+                }, 10);
+            $(".tweet").removeClass("slidedown");
+    });
+    $(".hashtag").one("transitionend", function(){
+            addht.prependTo(".hashscroll");
+            setTimeout(function(){
+                addht.addClass("fadeIn").removeClass("hidden");
+                }, 10);
+            $(".hashtag").removeClass("slidedown");
+    });
+    addTweet.one("transitionend", function(){
+            addTweet.removeClass("fadeIn");
+    });
+    addht.one("transitionend", function(){
+            addht.removeClass("fadeIn");
+    });
+}
+
 // Start everything after document is loaded
 $(document).ready(function() {
-    $.ajax({
+    /*$.ajax({
         dataType: "json",
         url: "tweets.json",
         success: function(data, textStatus, xhr) {
@@ -126,5 +162,6 @@ $(document).ready(function() {
             initialize(data);
             setInterval(function(){scroll(data);}, 3000);
         }
-    });
+    });*/
+    setInterval(function(){scroll();}, 3000);
 });
