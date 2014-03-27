@@ -1,0 +1,14 @@
+Lab 5 Readme
+Lou Yufan
+
+For express, I just copied the guide.
+
+Unblocking I/O has resulted in a program structure different from what I am used to.
+
+Because the on('data') is an implicit loop, I had to use destroy() to break out of it explicitly, in order to form a valid JSON with [].
+
+Twitter's API is still unreachable from my choice of node wrapper "user-stream" and API tester "Postman". "ntwitter" indeed has a structured and neat implementation. But it's a waste of computation when I have to convert the JSON object JSON.parse()d by "ntwitter" back to text with JSON.stringify().
+
+As usual, I separated the credentials to another file and .gitignore-d it, but it will still be included in this package.
+
+I also implemented an option to give the number of tweets to be fetched through command line, parameter.
