@@ -5,7 +5,14 @@
     <title>WebSci Lab6</title>
   </head>
   <body>
-  <button id="getTweet" type="button">Get Tweets</button>
-  <button id="convert" type="button">Convert To CSV</button>
+    <div id="container">
+      <form id="ntweets" action="/getTweets" method="get">
+        <input type="number" name="n" id="numTweets" value="20" />
+        <button id="getTweet" type="submit">Get Tweets</button>
+      </form>
+      <form id="getCSV" action="/tweets.csv" method="get">
+        <button id="convert" type="submit">Convert To CSV</button>
+      </form>
+    </div>
   </body>
 </html>
