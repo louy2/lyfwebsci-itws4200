@@ -5,73 +5,85 @@ var Twitter = require('ntwitter'),
     fs = require('fs'),
     assert = require('assert');
 
-//var cred = require('./cred.js');
+var cred = require('./cred.js');
 
-//function getTwitterStream(n){
-  //var i = 0;
-  //var t = new Twitter(cred);
-  //var r = fs.createWriteStream('./tweets.json');
-  //r.write('[');
+function getTwitterStream(n, f){
+  var i = 0;
+  var t = new Twitter(cred);
+  var r = fs.createWriteStream(f);
+  r.write('[');
 
-  //t.stream('statuses/sample', function(stream) {
-    //stream.on('data', function(data) {
-      //r.write(JSON.stringify(data));
-      //console.log(i);
-      //if (i++ < n) {
-        //r.write(',');
-      //} else {
-        //stream.destroy();
-      //}
-    //});
-    //stream.on('destroy', function(res) {
-      //console.log('Destroyed.');
-      //console.log(res);
-      //r.end(']');
-    //});
-    //r.on('finish', function() {
-      //console.log('Twitter stream fetched.');
-    //});
-  //});
-//}
+  t.stream('statuses/sample', function(stream) {
+    stream.on('data', function(data) {
+      r.write(JSON.stringify(data));
+      console.log(i);
+      if (i++ < n) {
+        r.write(',');
+      } else {
+        stream.destroy();
+      }
+    });
+    stream.on('destroy', function(res) {
+      console.log('Destroyed.');
+      console.log(res);
+      r.end(']');
+    });
+    r.on('finish', function() {
+      console.log('Twitter stream fetched.');
+    });
+  });
+}
 
 function json2csv(json) {
-  data = JSON.parse(json);
-  header = Object.getOwnPropertyNames(data[0]);
-  header.foreach(function(ele, ind, arr) {
-    ele = "\"" + ele + "\"";
+  var data = JSON.parse(json);
+  // make data an array if not
+  if (!Array.isArray(data)) { data = [data]; }
+  var header = Object.getOwnPropertyNames(data[0]);
+  var headstr = "";
+  header.forEach(function(ele, ind, arr) {
+    headstr += '"' + ele + '",';
   });
-  header = header.toString();
-  console.log(header);
-  csv = header + "\n";
-  data.foreach(function(ele, ind, arr) {
-    obj2csv(ele, csv);
+  headstr = headstr.slice(0,-1); // rid of last comma
+  var csv = header + "\r\n";
+  data.forEach(function(ele, ind, arr) {
+    csv += obj2csv(ele, csv);
+    csv += "\r\n";
   });
+  console.log('Conversion successful.');
   return csv;
 }
 
 function obj2csv(ele, csv) {
   for (var prop in ele) {
-    if (ele.hasOwnProperty(prop)) {
-      buf = ele[prop];
-      if (typeof buf == 'string') {
-        csv += buf;
-        return;
-      } else if (Array.isArray(buf)) {
-        csv += buf.toString();
-        return;
-      } else if (typeof buf == 'object') {
-        obj2csv(ele, csv);
-      }
+    var buf = ele[prop];
+    csv += '"';
+    if (!isNaN(buf)) {
+      csv += buf + ',';
+    } else if (typeof buf === 'string') {
+      csv += '"' + buf + '"';
+    } else if (Array.isArray(buf)) {
+      buf.forEach(function(ele, ind, arr) {
+        csv += '"' + ele + '",';
+      });
+      csv = headstr.slice(0,-1); // rid of last comma
+    } else if (typeof buf === 'object') {
+      csv += obj2csv(buf, csv);
     }
+    csv += '",';
   }
+  csv = csv.slice(0,-1); // rid of last comma
+  return csv;
 }
 
-fs.readFile('test.json', function(err, data) {
+//getTwitterStream(10, './testt.json');
+
+fs.readFile('testt.json', function(err, data) {
   if (err) throw err;
-  fs.writeFile('test.txt',json2csv(data),function(err){
-    if (err) throw err;
-    console.log('Conversion successful.');
-  });
+  json2csv(data);
+  //fs.writeFile('test.csv',json2csv(data),function(err){
+    //if (err) throw err;
+    //console.log('Conversion saved.');
+  //});
 });
 
 //app = express();
